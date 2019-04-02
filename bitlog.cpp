@@ -49,6 +49,17 @@ public:
     });
   }
 
+  /// @abi action
+  void delmsg(account_name user,uint64_t id) {
+    require_auth(user);
+    chatmsgs chatmsg_inx(_self,_self);
+    auto itr_chat = chatmsg_inx.find(id);
+    eosio_assert(itr_chat!=chatmsg_inx.end(), "对象不存在");
+    eosio_assert(itr_chat->user==user, "不是自己的消息");
+    chatmsg_inx.erase(itr_chat);
+  }
+
+
   void on(const currency::transfer &t, account_name code) {
 
   }
@@ -58,7 +69,7 @@ public:
       return;
     }
     auto &thiscontract = *this;
-    switch (action) { EOSIO_API(bitlog, (hi)(postmsg)); };
+    switch (action) { EOSIO_API(bitlog, (hi)(postmsg)(delmsg)); };
   }
 };
 
